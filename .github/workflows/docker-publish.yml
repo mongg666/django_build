@@ -39,13 +39,13 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT || '22' }}
+          host: ${{ secrets.SSH_HOST || '127.0.0.1' }}  # Значение по умолчанию
+          port: ${{ secrets.SSH_PORT || '2222' }}
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_timeout: 5m  # Увеличиваем таймаут
           script: |
-            echo "Успешное подключение!"
-            docker ps
+            echo "=== Successful connection! ==="
             cd /opt/myapp
             docker compose pull
-            docker compose up -d
+            docker compose up -d --force-recreate
