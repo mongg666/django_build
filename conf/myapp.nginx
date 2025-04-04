@@ -1,0 +1,15 @@
+server {
+    listen 80;
+    server_name myapp.django;
+
+    location /static/ {
+        alias /opt/myapp_static/;
+        expires 30d;
+        access_log off;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://localhost:8000;
+    }
+}
