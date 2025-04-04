@@ -50,3 +50,4 @@ jobs:
             echo "=== Успешное подключение ==="
             cd /opt/myapp
             docker compose up -d
+            
