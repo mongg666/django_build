@@ -44,11 +44,8 @@ jobs:
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "Успешное подключение!"
+            docker ps
             cd /opt/myapp
             docker compose pull
-            docker compose down
-            docker compose up -d --force-recreate
-            echo "Checking containers status..."
-            docker ps
-            echo "Waiting for startup..."
-            sleep 15
+            docker compose up -d
