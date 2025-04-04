@@ -45,9 +45,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           debug: true  # Включите отладку
           script: |
-            echo "=== Проверка окружения ==="
-            pwd
-            ls -la
-            docker compose version
+            echo "Проверка подключения к ${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}"
+            nc -zv ${{ secrets.SSH_HOST }} ${{ secrets.SSH_PORT }} || exit 1
+            echo "=== Успешное подключение ==="
             cd /opt/myapp
             docker compose up -d
