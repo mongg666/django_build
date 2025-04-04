@@ -39,8 +39,8 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT || '22' }}
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
