@@ -48,4 +48,4 @@ jobs:
             echo "=== Successful connection! ==="
             cd /opt/myapp
             docker compose pull
-            docker compose up -d --force-recreate
+            docker compose up -d
