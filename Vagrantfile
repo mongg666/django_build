@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 443, host: 443
   config.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "0.0.0.0"
   config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
+  config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true, protocol: "tcp"
   config.vm.box_check_update = false
   config.vbguest.auto_update = false
 
