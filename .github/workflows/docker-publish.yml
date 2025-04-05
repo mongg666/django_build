@@ -39,8 +39,8 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: "localhost"  # Убедитесь в наличии фигурных скобок
-          port: 2222
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
