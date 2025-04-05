@@ -47,3 +47,8 @@ jobs:
             echo "Деплой начат!"
             cd /opt/myapp
             docker compose up -d
+      - name: Check secrets
+        run: |
+          echo "Host: ${{ secrets.SSH_HOST }}"
+          echo "Port: ${{ secrets.SSH_PORT }}"
+          echo "Key exists: ${{ !secrets.SSH_PRIVATE_KEY == '' }}"
