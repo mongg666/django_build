@@ -2,7 +2,7 @@ name: Docker Image CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]  # Проверьте имя ветки!
 
 env:
   REGISTRY: ghcr.io
@@ -16,21 +16,23 @@ jobs:
       packages: write
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
     
-    - name: Login to GHCR
+    - name: Docker Login
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Build and push
+    - name: Build and Push
       uses: docker/build-push-action@v5
       with:
         context: .
         push: true
-        tags: ${{ env.REGISTRY}}/${{ lower(github.repository) }}:latest
+        tags: |
+          ${{ env.REGISTRY}}/${{ lower(github.repository) }}:latest
 
   deploy:
     needs: build
@@ -38,9 +40,9 @@ jobs:
     steps:
       - name: Validate Secrets
         run: |
-          echo "Key length: ${#SSH_PRIVATE_KEY}"
-          echo "Key starts with: ${SSH_PRIVATE_KEY:0:30}"
-          echo "Key ends with: ${SSH_PRIVATE_KEY: -25}"
+          echo "Проверка секретов..."
+          [ -z "$SSH_PRIVATE_KEY" ] && echo "Ошибка: SSH_PRIVATE_KEY не задан!" && exit 1
+          echo "Начало ключа: ${SSH_PRIVATE_KEY:0:50}"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           
@@ -51,12 +53,7 @@ jobs:
           port: 2222
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
           script: |
-            echo "=== Проверка окружения ==="
-            ls -l ~/.ssh/authorized_keys
-            echo "=== Обновление контейнеров ==="
+            echo "=== Деплой начат ==="
             cd /opt/myapp
-            docker compose pull
-            docker compose up -d --force-recreate
-          debug: true
+            docker compose up -d
