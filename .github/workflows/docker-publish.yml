@@ -39,12 +39,11 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-            host: ${{ secrets.SSH_HOST }}
-            port: ${{ secrets.SSH_PORT }}
-            username: vagrant
-            host_key_checking: false
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            script: |
-              echo "=== Подключение к ${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }} ==="
-              cd /opt/myapp
-              docker compose up -d
+          host: ${{ secrets.SSH_HOST }}  # Убедитесь в наличии фигурных скобок
+          port: ${{ secrets.SSH_PORT || 2222 }}
+          username: vagrant
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Деплой начат!"
+            cd /opt/myapp
+            docker compose up -d
