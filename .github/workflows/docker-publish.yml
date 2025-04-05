@@ -36,6 +36,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Validate Secrets
+        run: |
+          echo "Key length: ${#SSH_PRIVATE_KEY}"
+          echo "Key starts with: ${SSH_PRIVATE_KEY:0:30}"
+          echo "Key ends with: ${SSH_PRIVATE_KEY: -25}"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -45,9 +53,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 60s
           script: |
-            echo "=== Проверка ключа ==="
-            ls -l ~/.ssh/
-            echo "=== Запуск контейнеров ==="
+            echo "=== Проверка окружения ==="
+            ls -l ~/.ssh/authorized_keys
+            echo "=== Обновление контейнеров ==="
             cd /opt/myapp
+            docker compose pull
             docker compose up -d --force-recreate
           debug: true
