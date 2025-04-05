@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write  # Ключевое разрешение
+      packages: write
     
     steps:
     - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        tags: ${{ env.REGISTRY}}/${{ lower(github.repository) }}:latest
 
   deploy:
     needs: build
@@ -43,15 +43,19 @@ jobs:
           port: 2222
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 60s
           script: |
-            docker compose -f /opt/myapp/docker-compose.yml up -d
-      - name: Check secrets
+            echo "=== Проверка ключа ==="
+            ls -l ~/.ssh/
+            echo "=== Запуск контейнеров ==="
+            cd /opt/myapp
+            docker compose up -d --force-recreate
+          debug: true
+          
+      - name: Validate Secrets
         run: |
-          echo "Host: ${{ secrets.SSH_HOST }}"
-          echo "Port: ${{ secrets.SSH_PORT }}"
-          echo "Key exists: ${{ !secrets.SSH_PRIVATE_KEY == '' }}"
-      - name: Debug SSH connection
-        run: |
-          echo "Host: ${{ secrets.SSH_HOST }}"
-          echo "Port: ${{ secrets.SSH_PORT }}"
-          echo "Key: |${{ secrets.SSH_PRIVATE_KEY }}|"
+          echo "Key length: ${#SSH_PRIVATE_KEY}"
+          echo "Key starts with: ${SSH_PRIVATE_KEY:0:30}"
+          echo "Key ends with: ${SSH_PRIVATE_KEY: -25}"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
