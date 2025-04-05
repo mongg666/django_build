@@ -23,7 +23,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}  # Используем системный токен
+        password: "vagrant"  # Используем системный токен
     
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -39,16 +39,19 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SSH_HOST }}  # Убедитесь в наличии фигурных скобок
-          port: ${{ secrets.SSH_PORT || 2222 }}
+          host: "localhost"  # Убедитесь в наличии фигурных скобок
+          port: 2222
           username: vagrant
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "Деплой начат!"
-            cd /opt/myapp
-            docker compose up -d
+            docker compose -f /opt/myapp/docker-compose.yml up -d
       - name: Check secrets
         run: |
           echo "Host: ${{ secrets.SSH_HOST }}"
           echo "Port: ${{ secrets.SSH_PORT }}"
           echo "Key exists: ${{ !secrets.SSH_PRIVATE_KEY == '' }}"
+      - name: Debug SSH connection
+        run: |
+          echo "Host: ${{ secrets.SSH_HOST }}"
+          echo "Port: ${{ secrets.SSH_PORT }}"
+          echo "Key: |${{ secrets.SSH_PRIVATE_KEY }}|"
