@@ -22,6 +22,8 @@ jobs:
           buildkitd-config: |
             [registry."ghcr.io"]
               mirrors = ["ghcr.io"]
+            [worker.oci]
+              rootless = true
 
       - name: Build and push
         uses: docker/build-push-action@v5
