@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: django-app
+    image: ghcr.io/mongg666/django_build:latest
     build:
       context: .
     ports:
