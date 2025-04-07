@@ -52,19 +52,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Start Vagrant and Deploy
+      - name: Deploy with Docker Compose
         run: |
-          # Поднять Vagrant-машину (если не запущена)
-          vagrant up
-          
-          # Выполнить деплой внутри Vagrant
-          vagrant ssh -c "cd /vagrant && \
-            docker compose -f ${{ env.COMPOSE_FILE }} pull && \
-            docker compose -f ${{ env.COMPOSE_FILE }} down && \
+            docker compose -f ${{ env.COMPOSE_FILE }} pull
+            docker compose -f ${{ env.COMPOSE_FILE }} down
             docker compose -f ${{ env.COMPOSE_FILE }} up -d --build"
 
       - name: Run Migrations
-        run: vagrant ssh -c "cd /vagrant && docker compose exec web python manage.py migrate"
+        run: docker compose exec web python manage.py migrate
 
       - name: Collect Static
-        run: vagrant ssh -c "cd /vagrant && docker compose exec web python manage.py collectstatic --noinput"
+        run: docker compose exec web python manage.py collectstatic --noinput
